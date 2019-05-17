@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from collections import defaultdict
+from crawler.items import movieItem
+from crawler.pipelines import MongoDBPipeline
+from crawler.cleaner import clean_synopysis
 
 
 class FilmesEmCartazSpider(scrapy.Spider):
@@ -10,15 +12,15 @@ class FilmesEmCartazSpider(scrapy.Spider):
     
     def __init__(self):
         self.URL_BASE = "http://www.adorocinema.com"
+        self.db = MongoDBPipeline()
 
     def parse(self, response):
-        movies = defaultdict(dict)
+        
         for div in response.xpath("//li[@class='mdl']"): 
-            movie = div.xpath("./div/div/h2/a/text()").extract_first() 
-            note = div.xpath("./div/div[3]/div[3]//span[@class='stareval-note']/text()").extract_first()
-            link = self.URL_BASE + div.xpath("./div/div/h2/a/@href").extract_first()
-
-            movies[movie]['note'] = note
-            movies[movie]['link'] = link
+            movies = movieItem()
+            movies['name'] = div.xpath("./div/div/h2/a/text()").extract_first() 
+            movies['note'] = div.xpath("./div/div[3]/div[3]//span[@class='stareval-note']/text()").extract_first()
+            movies['link'] = self.URL_BASE + div.xpath("./div/div/h2/a/@href").extract_first()
+            movies['synopsis'] = clean_synopysis(div.xpath("./div//div[@class='synopsis']/div/text()").extract_first())
             
-        yield movies
+            yield self.db.process_item(movies)

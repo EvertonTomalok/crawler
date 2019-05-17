@@ -1,11 +1,20 @@
+from pymongo import MongoClient
+from scrapy.exceptions import DropItem
+from scrapy import log
+
+
 # -*- coding: utf-8 -*-
 
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+class MongoDBPipeline:
+    
+    def __init__(self):
+        client = MongoClient()
+        db = client.tcc
+        self.collection = db.filmes
 
-
-class CrawlerPipeline(object):
-    def process_item(self, item, spider):
+    def process_item(self, item):
+        self.collection.update({'link': item['link']}, dict(item), upsert=True)
+        log.msg(f"Movie '{item['name']}' added to MongoDB database!",
+                level=log.DEBUG)
         return item
+    
