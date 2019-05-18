@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import scrapy
+from bs4 import BeautifulSoup
 
 from crawler.cleaner import clean_synopysis
 from crawler.items import movieItem, movieReview
@@ -17,7 +18,7 @@ class FilmesEmCartazSpider(scrapy.Spider):
         self.URL_BASE = "http://www.adorocinema.com"
         self.URL_SESSAO = "/filmes/numero-cinemas/"
         self.URL_CRITICA = "criticas-adorocinema/"
-        self.URL_PAGE = "?page={num_page}"
+        self.URL_PAGE = "?page={}"
         self.db = MongoDBPipeline()
         self.save = save
         self.page = 0
@@ -40,12 +41,11 @@ class FilmesEmCartazSpider(scrapy.Spider):
                 request = scrapy.Request(link + self.URL_CRITICA, callback=self.parse_review)
                 request.meta['movies'] = movies
                 yield request
-        #
-        # if response.xpath("//span[contains(text(),'Próxima')]").extract():
-        #
-        #     self.page += 1
-        #     yield scrapy.Request(self.URL_BASE + self.URL_SESSAO + self.URL_PAGE.format(self.page),
-        #                          callback=self.parse)
+
+        if response.xpath("//span[contains(text(),'Próxima')]").extract():
+            self.page += 1
+            yield scrapy.Request(self.URL_BASE + self.URL_SESSAO + self.URL_PAGE.format(self.page),
+                                 callback=self.parse)
 
     def parse_review(self, response):
         movies_response = response.meta['movies']
@@ -54,7 +54,17 @@ class FilmesEmCartazSpider(scrapy.Spider):
         classification = "".join(classification).strip()
         movies_review['classification'] = classification
 
+        for div in response.xpath("//div[@class='editorial-content cf']").extract():
+            all_text = BeautifulSoup(div).text.split('\n')
+
+            text = [t for t in all_text if "Alerta: O texto a seguir busca" not in t]
+
+            review = " ".join(text)
+
+            movies_review['review'] = review.strip()
+
         movies = {**movies_response, **movies_review}
+
         if self.save:
             yield self.db.process_item(movies)
         yield movies
