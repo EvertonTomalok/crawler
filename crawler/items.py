@@ -13,3 +13,12 @@ class movieItem(Item):
     link = Field()
     note = Field()
     synopsis = Field()
+    classification = Field()
+    review = Field()
+
+
+class movieReview(Item):
+    link = Field()
+    synopsis = Field()
+    classification = Field()
+    review = Field()
