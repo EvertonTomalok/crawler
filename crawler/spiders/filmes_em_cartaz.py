@@ -17,6 +17,7 @@ class FilmesEmCartazSpider(scrapy.Spider):
         super().__init__()
         self.URL_BASE = "http://www.adorocinema.com"
         self.URL_SESSAO = "/filmes/numero-cinemas/"
+        self.URL_TODAS_CRITICAS = "/filmes/criticas-filmes/"
         self.URL_CRITICA = "criticas-adorocinema/"
         self.URL_PAGE = "?page={}"
         self.db = MongoDBPipeline()
