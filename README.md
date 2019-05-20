@@ -1,11 +1,11 @@
-# crawler
+# About the Crawler
 This is a crawler to retrive information from http://www.adorocinema.com.br
 
 A example is able to use in this file `todas_criticas_2019_05_19.json`
 
 
 # USAGE:
-  You'll need python > 3.6 installed in your machine, and pip, files manager of python.
+  You'll need python >= 3.6 installed in your machine, and pip, files manager of python.
   - First install pipenv:
     - pip install pipenv
   - Inside the folder:
