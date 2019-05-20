@@ -4,7 +4,7 @@ import scrapy
 from bs4 import BeautifulSoup
 
 from crawler.cleaner import clean_synopysis
-from crawler.items import movieItem, movieReview
+from crawler.items import MovieItem, MovieReview
 from crawler.pipelines import MongoDBPipeline
 
 
@@ -26,8 +26,8 @@ class FilmesEmCartazSpider(scrapy.Spider):
 
     def parse(self, response):
         
-        for div in response.xpath("//li[@class='mdl']"): 
-            movies = movieItem()
+        for div in response.xpath("//li[@class='mdl']"):
+            movies = MovieItem()
 
             link = None
             if div.xpath("./div/div/h2/a/@href").extract_first():
@@ -50,7 +50,7 @@ class FilmesEmCartazSpider(scrapy.Spider):
 
     def parse_review(self, response):
         movies_response = response.meta['movies']
-        movies_review = movieReview()
+        movies_review = MovieReview()
         classification = response.xpath("//div[@class='big-note']/span[@class='light']/text()").extract()
         classification = "".join(classification).strip()
         movies_review['classification'] = classification

@@ -8,7 +8,7 @@
 from scrapy.item import Item, Field
 
 
-class movieItem(Item):
+class MovieItem(Item):
     name = Field()
     link = Field()
     note = Field()
@@ -17,7 +17,7 @@ class movieItem(Item):
     review = Field()
 
 
-class movieReview(Item):
+class MovieReview(Item):
     link = Field()
     synopsis = Field()
     classification = Field()
