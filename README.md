@@ -18,6 +18,6 @@ A example is able to use in this file `todas_criticas_2019_05_19.json`
 ## Save in mongodb database:
   The information retrieved will be saved in MongoDB. To use this feature, you need to have installed in your machin, the mongoDB. See how to install here: https://docs.mongodb.com/v3.2/administration/install-community/
   To use this feature:
-  - scrapy crawl todas_criticas -a save
+  - scrapy crawl todas_criticas -a save=True
   
   The data collected will be save in a database called `tcc`, in a collection named `filmes`
